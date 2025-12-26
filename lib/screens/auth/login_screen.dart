@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import '../home/home_screen.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -14,6 +16,42 @@ class _AuthScreenState extends State<AuthScreen> {
   final _passwordController = TextEditingController();
   final _nameController = TextEditingController(); // only visible in signup
 
+  bool _isLoading = false;
+
+  //Added by Hashim
+
+  Future<void> _signIn() async {
+    if (_isLoading) return;
+    setState(() => _isLoading = true);
+
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+      );
+
+      if (mounted) {
+        // Check if widget is still in tree
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const HomeScreen()),
+        );
+      }
+    } on FirebaseAuthException catch (e) {
+      String message =
+          (e.code == 'user-not-found' || e.code == 'wrong-password')
+          ? 'Invalid email or password'
+          : 'Error: ${e.message}';
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(message)));
+      }
+    } finally {
+      setState(() => _isLoading = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,10 +61,7 @@ class _AuthScreenState extends State<AuthScreen> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [
-              Color(0xFF1A1A1A),
-              Color(0xFF121212),
-            ],
+            colors: [Color(0xFF1A1A1A), Color(0xFF121212)],
           ),
         ),
         child: SafeArea(
@@ -53,10 +88,7 @@ class _AuthScreenState extends State<AuthScreen> {
                 Text(
                   _isLogin ? 'Welcome back' : 'Create your account',
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 18,
-                    color: Colors.grey[400],
-                  ),
+                  style: TextStyle(fontSize: 18, color: Colors.grey[400]),
                 ),
 
                 const Spacer(flex: 3),
@@ -77,7 +109,9 @@ class _AuthScreenState extends State<AuthScreen> {
                                 style: const TextStyle(color: Colors.white),
                                 decoration: InputDecoration(
                                   labelText: 'Full Name',
-                                  labelStyle: TextStyle(color: Colors.grey[500]),
+                                  labelStyle: TextStyle(
+                                    color: Colors.grey[500],
+                                  ),
                                   filled: true,
                                   fillColor: Colors.grey[900],
                                   border: OutlineInputBorder(
@@ -155,10 +189,7 @@ class _AuthScreenState extends State<AuthScreen> {
                 SizedBox(
                   height: 60,
                   child: ElevatedButton(
-                    onPressed: () {
-                      // Logic will be added later
-                      // _submit()
-                    },
+                    onPressed: _isLoading ? null : _signIn,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFFFF6B6B),
                       foregroundColor: Colors.white,
@@ -167,13 +198,12 @@ class _AuthScreenState extends State<AuthScreen> {
                         borderRadius: BorderRadius.circular(30),
                       ),
                     ),
-                    child: Text(
-                      _isLogin ? 'Log In' : 'Sign Up',
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    child: _isLoading
+                        ? const CircularProgressIndicator(color: Colors.white)
+                        : Text(
+                            _isLogin ? 'Log in' : 'Sign Up',
+                            style: TextStyle(fontSize: 18),
+                          ),
                   ),
                 ),
 

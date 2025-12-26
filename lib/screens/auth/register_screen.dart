@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart'; //Hashim
+import '../home/home_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -12,6 +14,44 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
+  bool _isLoading = false; // Added by Hashim
+
+  // Added by Hashim Register Logic
+  Future<void> _signUp() async {
+    if (_isLoading) return;
+    setState(() => _isLoading = true);
+
+    try {
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+      );
+
+      // Optional: Update display name
+      if (_nameController.text.trim().isNotEmpty) {
+        await FirebaseAuth.instance.currentUser?.updateDisplayName(
+          _nameController.text.trim(),
+        );
+      }
+
+      // ← MANUAL NAVIGATION: Replace current screen with HomeScreen
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const HomeScreen()),
+        );
+      }
+    } on FirebaseAuthException catch (e) {
+      String message = e.message ?? 'Signup failed';
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(message)));
+      }
+    } finally {
+      setState(() => _isLoading = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,10 +62,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [
-              Color(0xFF181818),
-              Color(0xFF0F0F0F),
-            ],
+            colors: [Color(0xFF181818), Color(0xFF0F0F0F)],
           ),
         ),
         child: SafeArea(
@@ -64,10 +101,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 Text(
                   'Join Trackizer and take control of your subscriptions',
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey[400],
-                  ),
+                  style: TextStyle(fontSize: 16, color: Colors.grey[400]),
                 ),
 
                 const Spacer(flex: 3),
@@ -113,12 +147,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 SizedBox(
                   height: 60,
                   child: ElevatedButton(
-                    onPressed: () {
-                      // TODO: Add Firebase signup logic here later
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Sign up pressed!')),
-                      );
-                    },
+                    //Press functionality added by hashim
+                    onPressed: _isLoading ? null : _signUp,
+
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFFFF6B6B),
                       foregroundColor: Colors.white,
@@ -127,13 +158,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         borderRadius: BorderRadius.circular(30),
                       ),
                     ),
-                    child: const Text(
-                      'Create Account',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    //Added by Hashim
+                    child: _isLoading
+                        ? const CircularProgressIndicator(color: Colors.white)
+                        : const Text('Sign Up', style: TextStyle(fontSize: 18)),
                   ),
                 ),
 
