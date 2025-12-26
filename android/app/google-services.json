@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "101387223450",
+    "project_id": "trackizer-3c612",
+    "storage_bucket": "trackizer-3c612.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:101387223450:android:00a4937ee1b7853ccfba23",
+        "android_client_info": {
+          "package_name": "com.example.expense_tracker"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAV7HBy_4sdaP0vI4DVv_agmeZvRn_J2Ks"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
