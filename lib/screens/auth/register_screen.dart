@@ -27,14 +27,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
         password: _passwordController.text.trim(),
       );
 
-      // Optional: Update display name
       if (_nameController.text.trim().isNotEmpty) {
         await FirebaseAuth.instance.currentUser?.updateDisplayName(
           _nameController.text.trim(),
         );
       }
 
-      // ← MANUAL NAVIGATION: Replace current screen with HomeScreen
       if (mounted) {
         Navigator.pushReplacement(
           context,
