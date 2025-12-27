@@ -8,6 +8,8 @@ import 'package:expense_tracker/widgets/home_headet.dart';
 import 'package:expense_tracker/widgets/stats_row.dart';
 import '../subscription/subscription_tabs.dart';
 import '../subscription/subscription_card.dart';
+import '../Category/category_main.dart';
+import '../subscription/edit_subscription_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -21,6 +23,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   int _selectedIndex = 0;
   int _selectedTab = 0;
+  int _currentIndex = 0; // <-- define this state variable
+
   double _budget = 2000.0; // Default budget
 
   @override
@@ -181,6 +185,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                   child: SubscriptionCard(
                                     sub: sub,
                                     firestoreService: _firestoreService,
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) =>
+                                              EditSubscriptionScreen(
+                                                subscription: sub,
+                                              ),
+                                        ),
+                                      );
+                                    },
                                   ),
                                 );
                               },
@@ -205,8 +220,20 @@ class _HomeScreenState extends State<HomeScreen> {
         child: const Icon(Icons.add),
       ),
       bottomNavigationBar: CustomBottomNavBar(
-        currentIndex: _selectedIndex,
-        onTap: (index) => setState(() => _selectedIndex = index),
+        currentIndex: _currentIndex,
+        onTap: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+
+          if (index == 1) {
+            // second button = category page
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => CategoryPage()),
+            );
+          }
+        },
       ),
     );
   }

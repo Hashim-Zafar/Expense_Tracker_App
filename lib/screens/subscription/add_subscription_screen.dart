@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:expense_tracker/services/firestore_service.dart';
 import 'package:expense_tracker/models/subscription.dart';
+import 'package:flutter/services.dart';
+import 'package:expense_tracker/services/firestore_service.dart';
+import 'package:expense_tracker/services/firestore_category_service.dart';
 import '../Category/category_main.dart';
+import 'package:expense_tracker/models/category.dart';
 
 class AddSubscriptionScreen extends StatefulWidget {
   const AddSubscriptionScreen({super.key});
@@ -13,6 +16,7 @@ class AddSubscriptionScreen extends StatefulWidget {
 
 class _AddSubscriptionScreenState extends State<AddSubscriptionScreen> {
   final FirestoreService _firestoreService = FirestoreService();
+  final CategoryService _categoryService = CategoryService();
 
   final TextEditingController _nameCtrl = TextEditingController();
   final TextEditingController _descCtrl = TextEditingController();
@@ -20,38 +24,7 @@ class _AddSubscriptionScreenState extends State<AddSubscriptionScreen> {
 
   String? _selectedCategory;
 
-  Future<void> _showAddCategoryDialog() async {
-    final TextEditingController _catCtrl = TextEditingController();
-
-    await showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Add New Category'),
-        content: TextField(
-          controller: _catCtrl,
-          decoration: const InputDecoration(hintText: 'Category name'),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              if (_catCtrl.text.trim().isEmpty) return;
-              await _firestoreService.addCategory(_catCtrl.text.trim());
-              setState(() => _selectedCategory = _catCtrl.text.trim());
-              Navigator.pop(context);
-            },
-            child: const Text('Add'),
-          ),
-        ],
-      ),
-    );
-  }
-
   double _price = 5.99;
-
   IconData _icon = Icons.star;
   Color _color = Colors.grey;
 
@@ -68,15 +41,61 @@ class _AddSubscriptionScreenState extends State<AddSubscriptionScreen> {
       firstDate: DateTime.now(),
       lastDate: DateTime.now().add(const Duration(days: 365)),
     );
+    if (picked != null) setState(() => _dueDate = picked);
+  }
 
-    if (picked != null) {
-      setState(() => _dueDate = picked);
-    }
+  Future<void> _showAddCategoryDialog() async {
+    final TextEditingController _catCtrl = TextEditingController();
+    final TextEditingController _budgetCtrl = TextEditingController();
+
+    await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Add New Category'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: _catCtrl,
+              decoration: const InputDecoration(hintText: 'Category name'),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: _budgetCtrl,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(hintText: 'Budget'),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              final name = _catCtrl.text.trim();
+              final budget = double.tryParse(_budgetCtrl.text.trim());
+              if (name.isEmpty || budget == null) return;
+
+              await _categoryService.addCategory(name: name, budget: budget);
+
+              setState(() => _selectedCategory = name);
+              Navigator.pop(context);
+            },
+            child: const Text('Add'),
+          ),
+        ],
+      ),
+    );
   }
 
   Future<void> _addSubscription() async {
     if (_nameCtrl.text.trim().isEmpty) return;
 
+    final selectedCategory = _selectedCategory ?? 'Uncategorized';
+
+    // 1️⃣ Add the subscription
     await _firestoreService.addSubscription(
       Subscription(
         id: '',
@@ -87,9 +106,20 @@ class _AddSubscriptionScreenState extends State<AddSubscriptionScreen> {
         nextDue: Timestamp.fromDate(_dueDate),
         icon: _icon,
         color: _color,
-        category: _selectedCategory ?? 'Uncategorized',
+        category: selectedCategory,
       ),
     );
+
+    // 2️⃣ Update the category's spent amount
+    if (selectedCategory != 'Uncategorized') {
+      final category = await _categoryService.getCategoryByName(
+        selectedCategory,
+      );
+      if (category != null) {
+        final newSpent = category.spent + _price;
+        await _categoryService.updateCategorySpent(category.id, newSpent);
+      }
+    }
 
     Navigator.pop(context);
   }
@@ -112,7 +142,6 @@ class _AddSubscriptionScreenState extends State<AddSubscriptionScreen> {
         child: Column(
           children: [
             const SizedBox(height: 16),
-
             const Text(
               'Add new\nsubscription',
               textAlign: TextAlign.center,
@@ -122,7 +151,6 @@ class _AddSubscriptionScreenState extends State<AddSubscriptionScreen> {
                 color: Colors.white,
               ),
             ),
-
             const SizedBox(height: 32),
 
             // Dynamic icon preview
@@ -135,7 +163,6 @@ class _AddSubscriptionScreenState extends State<AddSubscriptionScreen> {
               ),
               child: Icon(_icon, size: 64, color: _color),
             ),
-
             const SizedBox(height: 24),
 
             // Subscription name
@@ -154,7 +181,6 @@ class _AddSubscriptionScreenState extends State<AddSubscriptionScreen> {
                 ),
               ),
             ),
-
             const SizedBox(height: 16),
 
             // Description
@@ -172,16 +198,23 @@ class _AddSubscriptionScreenState extends State<AddSubscriptionScreen> {
                 ),
               ),
             ),
+            const SizedBox(height: 16),
 
-            StreamBuilder<List<String>>(
-              stream: _firestoreService.getCategories(),
+            // Category dropdown
+            StreamBuilder<List<Category>>(
+              stream: _categoryService.getCategories(),
               builder: (context, snapshot) {
                 final categories = snapshot.data ?? [];
+                final categoryNames = categories.map((c) => c.name).toList();
+
                 return DropdownButtonFormField<String>(
                   value: _selectedCategory,
                   items: [
-                    ...categories.map(
-                      (cat) => DropdownMenuItem(value: cat, child: Text(cat)),
+                    ...categoryNames.map(
+                      (catName) => DropdownMenuItem(
+                        value: catName,
+                        child: Text(catName),
+                      ),
                     ),
                     const DropdownMenuItem(
                       value: '__add_new__',
@@ -190,14 +223,7 @@ class _AddSubscriptionScreenState extends State<AddSubscriptionScreen> {
                   ],
                   onChanged: (val) async {
                     if (val == '__add_new__') {
-                      // Navigate to CategoryPage
-                      final selected = await Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => const CategoryPage()),
-                      );
-                      if (selected != null) {
-                        setState(() => _selectedCategory = selected);
-                      }
+                      await _showAddCategoryDialog();
                     } else {
                       setState(() => _selectedCategory = val);
                     }
@@ -219,8 +245,7 @@ class _AddSubscriptionScreenState extends State<AddSubscriptionScreen> {
 
             const SizedBox(height: 32),
 
-            const SizedBox(height: 24),
-            //Due Date
+            // Due date picker
             GestureDetector(
               onTap: _pickDueDate,
               child: Container(
@@ -256,9 +281,7 @@ class _AddSubscriptionScreenState extends State<AddSubscriptionScreen> {
                       icon: const Icon(Icons.remove),
                       color: Colors.white,
                       onPressed: () {
-                        if (_price > 1) {
-                          setState(() => _price -= 1);
-                        }
+                        if (_price > 1) setState(() => _price -= 1);
                       },
                     ),
                     Text(
@@ -272,9 +295,7 @@ class _AddSubscriptionScreenState extends State<AddSubscriptionScreen> {
                     IconButton(
                       icon: const Icon(Icons.add),
                       color: Colors.white,
-                      onPressed: () {
-                        setState(() => _price += 1);
-                      },
+                      onPressed: () => setState(() => _price += 1),
                     ),
                   ],
                 ),
@@ -283,7 +304,7 @@ class _AddSubscriptionScreenState extends State<AddSubscriptionScreen> {
 
             const Spacer(),
 
-            // Add button
+            // Add subscription button
             SizedBox(
               width: double.infinity,
               height: 56,

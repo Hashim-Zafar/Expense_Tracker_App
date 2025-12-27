@@ -77,28 +77,4 @@ class FirestoreService {
       'budget': budget,
     }, SetOptions(merge: true));
   }
-
-  // Add a new category
-  Future<void> addCategory(String name) async {
-    if (_user == null) return;
-    await _firestore
-        .collection('users')
-        .doc(_user!.uid)
-        .collection('categories')
-        .add({'name': name});
-  }
-
-  // Fetch categories
-  Stream<List<String>> getCategories() {
-    if (_user == null) return Stream.value([]);
-    return _firestore
-        .collection('users')
-        .doc(_user!.uid)
-        .collection('categories')
-        .snapshots()
-        .map(
-          (snapshot) =>
-              snapshot.docs.map((doc) => doc['name'] as String).toList(),
-        );
-  }
 }
