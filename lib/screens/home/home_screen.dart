@@ -10,6 +10,8 @@ import '../subscription/subscription_tabs.dart';
 import '../subscription/subscription_card.dart';
 import '../Category/category_main.dart';
 import '../subscription/edit_subscription_screen.dart';
+import '../settings/settings_screen.dart';
+import '../calender/calendar_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -100,8 +102,8 @@ class _HomeScreenState extends State<HomeScreen> {
             final displayedSubs = _selectedTab == 0
                 ? subs
                 : _selectedTab == 1
-                    ? _getUpcomingBills(subs)
-                    : _getOverdueBills(subs);
+                ? _getUpcomingBills(subs)
+                : _getOverdueBills(subs);
 
             return Column(
               children: [
@@ -110,10 +112,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(height: 20),
 
                 // 30% usage visually strong
-                BudgetSummary(
-                  totalAmount: monthlyTotal,
-                  maxAmount: _budget,
-                ),
+                BudgetSummary(totalAmount: monthlyTotal, maxAmount: _budget),
 
                 const SizedBox(height: 32),
 
@@ -156,8 +155,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (_) =>
-                                          EditSubscriptionScreen(
+                                      builder: (_) => EditSubscriptionScreen(
                                         subscription: sub,
                                       ),
                                     ),
@@ -180,25 +178,10 @@ class _HomeScreenState extends State<HomeScreen> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(
-              builder: (_) => const AddSubscriptionScreen(),
-            ),
+            MaterialPageRoute(builder: (_) => const AddSubscriptionScreen()),
           );
         },
         child: const Icon(Icons.add, color: Colors.black),
-      ),
-
-      bottomNavigationBar: CustomBottomNavBar(
-        currentIndex: _currentIndex,
-        onTap: (index) {
-          setState(() => _currentIndex = index);
-          if (index == 1) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => CategoryPage()),
-            );
-          }
-        },
       ),
     );
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../home/home_screen.dart';
+import '../main_layout.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -31,18 +32,19 @@ class _AuthScreenState extends State<AuthScreen> {
       if (mounted) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const HomeScreen()),
+          MaterialPageRoute(builder: (context) => const MainLayout()),
         );
       }
     } on FirebaseAuthException catch (e) {
       String message =
           (e.code == 'user-not-found' || e.code == 'wrong-password')
-              ? 'Invalid email or password'
-              : 'Error: ${e.message}';
+          ? 'Invalid email or password'
+          : 'Error: ${e.message}';
 
       if (mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(message)));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(message)));
       }
     } finally {
       setState(() => _isLoading = false);
@@ -109,23 +111,19 @@ class _AuthScreenState extends State<AuthScreen> {
                             children: [
                               TextField(
                                 controller: _nameController,
-                                style:
-                                    const TextStyle(color: Colors.white),
+                                style: const TextStyle(color: Colors.white),
                                 decoration: InputDecoration(
                                   labelText: 'Full Name',
                                   labelStyle: const TextStyle(
                                     color: Color(0xFFB7B6D8),
                                   ),
                                   filled: true,
-                                  fillColor:
-                                      Color(0xFF3A3860), // card purple
+                                  fillColor: Color(0xFF3A3860), // card purple
                                   border: OutlineInputBorder(
-                                    borderRadius:
-                                        BorderRadius.circular(16),
+                                    borderRadius: BorderRadius.circular(16),
                                     borderSide: BorderSide.none,
                                   ),
-                                  contentPadding:
-                                      const EdgeInsets.symmetric(
+                                  contentPadding: const EdgeInsets.symmetric(
                                     horizontal: 20,
                                     vertical: 16,
                                   ),
@@ -144,9 +142,7 @@ class _AuthScreenState extends State<AuthScreen> {
                   style: const TextStyle(color: Colors.white),
                   decoration: InputDecoration(
                     labelText: 'Email',
-                    labelStyle: const TextStyle(
-                      color: Color(0xFFB7B6D8),
-                    ),
+                    labelStyle: const TextStyle(color: Color(0xFFB7B6D8)),
                     filled: true,
                     fillColor: const Color(0xFF3A3860),
                     border: OutlineInputBorder(
@@ -169,9 +165,7 @@ class _AuthScreenState extends State<AuthScreen> {
                   style: const TextStyle(color: Colors.white),
                   decoration: InputDecoration(
                     labelText: 'Password',
-                    labelStyle: const TextStyle(
-                      color: Color(0xFFB7B6D8),
-                    ),
+                    labelStyle: const TextStyle(color: Color(0xFFB7B6D8)),
                     filled: true,
                     fillColor: const Color(0xFF3A3860),
                     border: OutlineInputBorder(
@@ -205,8 +199,7 @@ class _AuthScreenState extends State<AuthScreen> {
                       ),
                     ),
                     child: _isLoading
-                        ? const CircularProgressIndicator(
-                            color: Colors.black)
+                        ? const CircularProgressIndicator(color: Colors.black)
                         : Text(
                             _isLogin ? 'Log in' : 'Sign Up',
                             style: const TextStyle(fontSize: 18),
@@ -224,9 +217,7 @@ class _AuthScreenState extends State<AuthScreen> {
                       _isLogin
                           ? "Don't have an account? "
                           : 'Already have an account? ',
-                      style: const TextStyle(
-                        color: Color(0xFFB7B6D8),
-                      ),
+                      style: const TextStyle(color: Color(0xFFB7B6D8)),
                     ),
                     TextButton(
                       onPressed: () {

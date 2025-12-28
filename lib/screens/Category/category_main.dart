@@ -1,10 +1,10 @@
+import 'package:flutter/material.dart';
 import 'package:expense_tracker/models/category.dart';
 import 'package:expense_tracker/services/firestore_category_service.dart';
-import 'package:flutter/material.dart';
 import 'category_card.dart';
 
 class CategoryPage extends StatelessWidget {
-  CategoryPage({super.key});
+  CategoryPage({super.key}); // Removed 'const' because of non-const field
 
   final CategoryService _categoryService = CategoryService();
 
@@ -42,7 +42,10 @@ class CategoryPage extends StatelessWidget {
                       ),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.settings, color: Color(0xFFE6E6FF)),
+                      icon: const Icon(
+                        Icons.settings,
+                        color: Color(0xFFE6E6FF),
+                      ),
                       onPressed: () {},
                     ),
                   ],
@@ -76,8 +79,8 @@ class CategoryPage extends StatelessWidget {
                       ],
                     ),
                     child: Column(
-                      children: const [
-                        Text(
+                      children: [
+                        const Text(
                           '\$120',
                           style: TextStyle(
                             fontSize: 40,
@@ -85,18 +88,18 @@ class CategoryPage extends StatelessWidget {
                             color: Colors.white,
                           ),
                         ),
-                        SizedBox(height: 8),
-                        Text(
+                        const SizedBox(height: 8),
+                        const Text(
                           'Budget spent',
                           style: TextStyle(color: Color(0xFFE6E6FF)),
                         ),
-                        SizedBox(height: 4),
-                        Text(
+                        const SizedBox(height: 4),
+                        const Text(
                           'of',
                           style: TextStyle(color: Color(0xFFE6E6FF)),
                         ),
-                        SizedBox(height: 4),
-                        Text(
+                        const SizedBox(height: 4),
+                        const Text(
                           '\$500',
                           style: TextStyle(
                             fontSize: 20,
@@ -104,8 +107,8 @@ class CategoryPage extends StatelessWidget {
                             fontWeight: FontWeight.w500,
                           ),
                         ),
-                        SizedBox(height: 4),
-                        Text(
+                        const SizedBox(height: 4),
+                        const Text(
                           'total Budget',
                           style: TextStyle(color: Color(0xFFE6E6FF)),
                         ),
@@ -176,20 +179,28 @@ class CategoryPage extends StatelessWidget {
                             children: [
                               TextField(
                                 controller: nameController,
-                                style: const TextStyle(color: Color(0xFFE6E6FF)),
+                                style: const TextStyle(
+                                  color: Color(0xFFE6E6FF),
+                                ),
                                 decoration: const InputDecoration(
                                   hintText: 'Category name',
-                                  hintStyle: TextStyle(color: Color(0xFFA9AACF)),
+                                  hintStyle: TextStyle(
+                                    color: Color(0xFFA9AACF),
+                                  ),
                                 ),
                               ),
                               const SizedBox(height: 12),
                               TextField(
                                 controller: budgetController,
                                 keyboardType: TextInputType.number,
-                                style: const TextStyle(color: Color(0xFFE6E6FF)),
+                                style: const TextStyle(
+                                  color: Color(0xFFE6E6FF),
+                                ),
                                 decoration: const InputDecoration(
                                   hintText: 'Budget',
-                                  hintStyle: TextStyle(color: Color(0xFFA9AACF)),
+                                  hintStyle: TextStyle(
+                                    color: Color(0xFFA9AACF),
+                                  ),
                                 ),
                               ),
                             ],
@@ -231,10 +242,7 @@ class CategoryPage extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(vertical: 18),
                     decoration: BoxDecoration(
                       gradient: const LinearGradient(
-                        colors: [
-                          Color(0xFFB18AFF),
-                          Color(0xFF5CFFB0),
-                        ],
+                        colors: [Color(0xFFB18AFF), Color(0xFF5CFFB0)],
                       ),
                       borderRadius: BorderRadius.circular(20),
                     ),
