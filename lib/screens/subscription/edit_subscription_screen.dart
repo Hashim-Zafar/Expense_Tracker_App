@@ -59,11 +59,15 @@ class _EditSubscriptionScreenState extends State<EditSubscriptionScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF101025),
+      backgroundColor: const Color(0xFF2B2D4F),
+
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: const Text('Edit', style: TextStyle(color: Colors.white)),
+        title: const Text(
+          'Edit',
+          style: TextStyle(color: Colors.white),
+        ),
         iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: Padding(
@@ -78,7 +82,7 @@ class _EditSubscriptionScreenState extends State<EditSubscriptionScreen> {
               style: TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
-                color: Color(0xFFE0E0FF),
+                color: Colors.white,
               ),
             ),
 
@@ -141,7 +145,7 @@ class _EditSubscriptionScreenState extends State<EditSubscriptionScreen> {
                       style: const TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: Color(0xFF80FFB5),
                       ),
                     ),
                     IconButton(
@@ -175,7 +179,9 @@ class _EditSubscriptionScreenState extends State<EditSubscriptionScreen> {
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
-                    color: Colors.black,
+          color: const Color(0xFF2B2D4F)
+
+
                   ),
                 ),
               ),
