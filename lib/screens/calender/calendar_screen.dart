@@ -18,7 +18,6 @@ class _CalendarScreenState extends State<CalendarScreen> {
   DateTime _focusedDay = DateTime.now();
   DateTime _selectedDay = DateTime.now();
 
-  // Map<normalized date, list of subscriptions due that day>
   final Map<DateTime, List<Subscription>> _events = {};
 
   @override
@@ -27,20 +26,27 @@ class _CalendarScreenState extends State<CalendarScreen> {
     _selectedDay = _focusedDay;
   }
 
-  // Remove time part from DateTime for comparison
   DateTime _normalize(DateTime date) =>
       DateTime(date.year, date.month, date.day);
 
   @override
   Widget build(BuildContext context) {
+    const bgColor = Color(0xFF2A2D4F);
+    const cardColor = Color(0xFF343763);
+    const accentGreen = Color(0xFF4DFFB3);
+    const accentPurple = Color(0xFF8B8EFF);
+
     return Scaffold(
-      backgroundColor: const Color(0xFF0F0F0F),
+      backgroundColor: bgColor,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         title: const Text(
           'Calendar',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         centerTitle: true,
       ),
@@ -49,7 +55,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
-              child: CircularProgressIndicator(color: Color(0xFFFF6B6B)),
+              child: CircularProgressIndicator(color: accentGreen),
             );
           }
 
@@ -57,14 +63,13 @@ class _CalendarScreenState extends State<CalendarScreen> {
             return Center(
               child: Text(
                 'Error loading data',
-                style: TextStyle(color: Colors.grey[400]),
+                style: TextStyle(color: Colors.white54),
               ),
             );
           }
 
           final List<Subscription> subscriptions = snapshot.data ?? [];
 
-          // Rebuild events map
           _events.clear();
           for (var sub in subscriptions) {
             final dueDate = _normalize(sub.nextDue.toDate());
@@ -72,16 +77,15 @@ class _CalendarScreenState extends State<CalendarScreen> {
             _events[dueDate]!.add(sub);
           }
 
-          // Subscriptions due on selected day
           final selectedEvents = _events[_normalize(_selectedDay)] ?? [];
 
           return Column(
             children: [
-              // Calendar Widget
+              // Calendar
               Container(
                 margin: const EdgeInsets.fromLTRB(16, 16, 16, 8),
                 decoration: BoxDecoration(
-                  color: Colors.grey[900]?.withOpacity(0.4),
+                  color: cardColor.withOpacity(0.6),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: TableCalendar(
@@ -119,36 +123,36 @@ class _CalendarScreenState extends State<CalendarScreen> {
                     ),
                   ),
                   daysOfWeekStyle: DaysOfWeekStyle(
-                    weekdayStyle: TextStyle(color: Colors.grey[400]),
-                    weekendStyle: TextStyle(color: Colors.grey[400]),
+                    weekdayStyle: TextStyle(color: Colors.white60),
+                    weekendStyle: TextStyle(color: Colors.white60),
                   ),
                   calendarStyle: CalendarStyle(
                     outsideDaysVisible: false,
-                    weekendTextStyle: const TextStyle(color: Colors.white70),
-                    defaultTextStyle: const TextStyle(color: Colors.white),
+                    weekendTextStyle:
+                        const TextStyle(color: Colors.white70),
+                    defaultTextStyle:
+                        const TextStyle(color: Colors.white),
                     selectedDecoration: const BoxDecoration(
-                      color: Color(0xFFFF6B6B),
+                      color: accentGreen,
                       shape: BoxShape.circle,
                     ),
                     todayDecoration: BoxDecoration(
-                      color: const Color(0xFFFF6B6B).withOpacity(0.5),
+                      color: accentGreen.withOpacity(0.4),
                       shape: BoxShape.circle,
                     ),
                     markerDecoration: const BoxDecoration(
-                      color: Color(0xFFFF6B6B),
+                      color: accentGreen,
                       shape: BoxShape.circle,
                     ),
                     markersMaxCount: 4,
                   ),
-
-                  // Show red dot if any subscription due
                   eventLoader: (day) => _events[_normalize(day)] ?? [],
                 ),
               ),
 
               const SizedBox(height: 20),
 
-              // Selected Date Title
+              // Selected Date
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Align(
@@ -166,20 +170,21 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
               const SizedBox(height: 16),
 
-              // List of due subscriptions
+              // Subscription List
               Expanded(
                 child: selectedEvents.isEmpty
                     ? Center(
                         child: Text(
                           'No subscriptions due on this day',
                           style: TextStyle(
-                            color: Colors.grey[400],
+                            color: Colors.white54,
                             fontSize: 16,
                           ),
                         ),
                       )
                     : ListView.builder(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        padding:
+                            const EdgeInsets.symmetric(horizontal: 20),
                         itemCount: selectedEvents.length,
                         itemBuilder: (context, index) {
                           final sub = selectedEvents[index];
@@ -187,7 +192,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                             margin: const EdgeInsets.only(bottom: 12),
                             padding: const EdgeInsets.all(16),
                             decoration: BoxDecoration(
-                              color: Colors.grey[900]?.withOpacity(0.4),
+                              color: cardColor.withOpacity(0.6),
                               borderRadius: BorderRadius.circular(16),
                             ),
                             child: Row(
@@ -196,8 +201,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                   width: 50,
                                   height: 50,
                                   decoration: BoxDecoration(
-                                    color: sub.color.withOpacity(0.2),
-                                    borderRadius: BorderRadius.circular(12),
+                                    color: sub.color.withOpacity(0.25),
+                                    borderRadius:
+                                        BorderRadius.circular(12),
                                   ),
                                   child: Icon(
                                     sub.icon,
@@ -223,7 +229,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                       Text(
                                         'Due today',
                                         style: TextStyle(
-                                          color: Colors.grey[400],
+                                          color: Colors.white60,
                                           fontSize: 14,
                                         ),
                                       ),
@@ -235,7 +241,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                   style: const TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.white,
+                                    color: accentPurple,
                                   ),
                                 ),
                               ],

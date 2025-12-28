@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:expense_tracker/services/firestore_service.dart'; // Adjust path if needed
-import 'package:expense_tracker/screens/auth/welcome_screen.dart'; // For logout navigation
+import 'package:expense_tracker/services/firestore_service.dart';
+import 'package:expense_tracker/screens/auth/welcome_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -66,19 +66,29 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    const bgColor = Color(0xFF2A2D4F);
+    const cardColor = Color(0xFF343763);
+    const accentGreen = Color(0xFF4DFFB3);
+    const accentPurple = Color(0xFF8B8EFF);
+
     return Scaffold(
-      backgroundColor: const Color(0xFF0F0F0F),
+      backgroundColor: bgColor,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         title: const Text(
           'Settings',
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
         ),
         centerTitle: true,
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(
+              child: CircularProgressIndicator(color: accentGreen),
+            )
           : SingleChildScrollView(
               padding: const EdgeInsets.all(20),
               child: Column(
@@ -87,19 +97,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   Container(
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      color: Colors.grey[900]?.withOpacity(0.4),
+                      color: cardColor.withOpacity(0.6),
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: Row(
                       children: [
                         CircleAvatar(
                           radius: 40,
-                          backgroundColor: const Color(0xFFFF6B6B),
+                          backgroundColor: accentPurple,
                           child: Text(
                             _user?.email?[0].toUpperCase() ?? 'U',
                             style: const TextStyle(
                               fontSize: 32,
                               color: Colors.white,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
@@ -118,7 +129,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               ),
                               Text(
                                 _user?.email ?? '',
-                                style: TextStyle(color: Colors.grey[400]),
+                                style: TextStyle(
+                                  color: Colors.white.withOpacity(0.6),
+                                ),
                               ),
                             ],
                           ),
@@ -133,7 +146,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   Container(
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      color: Colors.grey[900]?.withOpacity(0.4),
+                      color: cardColor.withOpacity(0.6),
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: Column(
@@ -154,17 +167,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               child: TextField(
                                 controller: _budgetController,
                                 keyboardType: TextInputType.number,
-                                style: const TextStyle(color: Colors.white),
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                ),
                                 decoration: InputDecoration(
                                   prefixText: '\$ ',
                                   prefixStyle: const TextStyle(
-                                    color: Colors.white,
+                                    color: accentGreen,
                                     fontSize: 20,
+                                    fontWeight: FontWeight.bold,
                                   ),
                                   hintText: '2000',
-                                  hintStyle: TextStyle(color: Colors.grey[600]),
+                                  hintStyle: TextStyle(
+                                    color: Colors.white.withOpacity(0.4),
+                                  ),
                                   filled: true,
-                                  fillColor: Colors.grey[800]?.withOpacity(0.3),
+                                  fillColor: bgColor.withOpacity(0.6),
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(12),
                                     borderSide: BorderSide.none,
@@ -176,7 +195,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             ElevatedButton(
                               onPressed: _updateBudget,
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFFFF6B6B),
+                                backgroundColor: accentGreen,
+                                foregroundColor: bgColor,
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 24,
                                   vertical: 16,
@@ -187,7 +207,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               ),
                               child: const Text(
                                 'Update',
-                                style: TextStyle(fontSize: 16),
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                           ],
@@ -205,7 +228,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     child: OutlinedButton(
                       onPressed: _logout,
                       style: OutlinedButton.styleFrom(
-                        side: const BorderSide(color: Color(0xFFFF6B6B)),
+                        side: const BorderSide(color: accentPurple),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16),
                         ),
@@ -213,7 +236,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       child: const Text(
                         'Log Out',
                         style: TextStyle(
-                          color: Color(0xFFFF6B6B),
+                          color: accentPurple,
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
@@ -226,7 +249,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   // App Version
                   Text(
                     'Version 1.0.0',
-                    style: TextStyle(color: Colors.grey[600], fontSize: 14),
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.4),
+                      fontSize: 14,
+                    ),
                   ),
 
                   const SizedBox(height: 40),

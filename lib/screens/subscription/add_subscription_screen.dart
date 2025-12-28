@@ -43,12 +43,12 @@ class _AddSubscriptionScreenState extends State<AddSubscriptionScreen> {
       builder: (context, child) => Theme(
         data: ThemeData.dark().copyWith(
           colorScheme: const ColorScheme.dark(
-            primary: Color(0xFF80FFB5),
-            onPrimary: Colors.black,
-            surface: Color(0xFF1C1B33),
+            primary: Color(0xFF4DFFB3),
+            onPrimary: Color(0xFF2A2D4F),
+            surface: Color(0xFF343763),
             onSurface: Colors.white,
           ),
-          dialogBackgroundColor: const Color(0xFF101025),
+          dialogBackgroundColor: const Color(0xFF2A2D4F),
         ),
         child: child!,
       ),
@@ -63,17 +63,20 @@ class _AddSubscriptionScreenState extends State<AddSubscriptionScreen> {
     await showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF101025),
-        title: const Text('Add New Category', style: TextStyle(color: Colors.white)),
+        backgroundColor: const Color(0xFF2A2D4F),
+        title: const Text(
+          'Add New Category',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
               controller: _catCtrl,
               style: const TextStyle(color: Colors.white),
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 hintText: 'Category name',
-                hintStyle: TextStyle(color: Colors.grey),
+                hintStyle: TextStyle(color: Colors.white.withOpacity(0.5)),
               ),
             ),
             const SizedBox(height: 12),
@@ -81,9 +84,9 @@ class _AddSubscriptionScreenState extends State<AddSubscriptionScreen> {
               controller: _budgetCtrl,
               keyboardType: TextInputType.number,
               style: const TextStyle(color: Colors.white),
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 hintText: 'Budget',
-                hintStyle: TextStyle(color: Colors.grey),
+                hintStyle: TextStyle(color: Colors.white.withOpacity(0.5)),
               ),
             ),
           ],
@@ -91,7 +94,10 @@ class _AddSubscriptionScreenState extends State<AddSubscriptionScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel', style: TextStyle(color: Color(0xFF9C8FFF))),
+            child: const Text(
+              'Cancel',
+              style: TextStyle(color: Color(0xFF8B8EFF)),
+            ),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -105,9 +111,12 @@ class _AddSubscriptionScreenState extends State<AddSubscriptionScreen> {
               Navigator.pop(context);
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF80FFB5),
+              backgroundColor: const Color(0xFF4DFFB3),
             ),
-            child: const Text('Add', style: TextStyle(color: Colors.black)),
+            child: const Text(
+              'Add',
+              style: TextStyle(color: Color(0xFF2A2D4F)),
+            ),
           ),
         ],
       ),
@@ -134,7 +143,8 @@ class _AddSubscriptionScreenState extends State<AddSubscriptionScreen> {
     );
 
     if (selectedCategory != 'Uncategorized') {
-      final category = await _categoryService.getCategoryByName(selectedCategory);
+      final category =
+          await _categoryService.getCategoryByName(selectedCategory);
       if (category != null) {
         final newSpent = category.spent + _price;
         await _categoryService.updateCategorySpent(category.id, newSpent);
@@ -147,7 +157,7 @@ class _AddSubscriptionScreenState extends State<AddSubscriptionScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF101025),
+      backgroundColor: const Color(0xFF2A2D4F),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -155,7 +165,10 @@ class _AddSubscriptionScreenState extends State<AddSubscriptionScreen> {
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text('New', style: TextStyle(color: Colors.white)),
+        title: const Text(
+          'New',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(20),
@@ -168,7 +181,7 @@ class _AddSubscriptionScreenState extends State<AddSubscriptionScreen> {
               style: TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
-                color: Color(0xFFE0E0FF),
+                color: Colors.white,
               ),
             ),
             const SizedBox(height: 32),
@@ -178,7 +191,7 @@ class _AddSubscriptionScreenState extends State<AddSubscriptionScreen> {
               width: 130,
               height: 130,
               decoration: BoxDecoration(
-                color: _color.withOpacity(0.2),
+                color: _color.withOpacity(0.25),
                 borderRadius: BorderRadius.circular(32),
               ),
               child: Icon(_icon, size: 64, color: _color),
@@ -192,9 +205,9 @@ class _AddSubscriptionScreenState extends State<AddSubscriptionScreen> {
               style: const TextStyle(color: Colors.white),
               decoration: InputDecoration(
                 hintText: 'Subscription name',
-                hintStyle: TextStyle(color: Colors.grey[500]),
+                hintStyle: TextStyle(color: Colors.white.withOpacity(0.5)),
                 filled: true,
-                fillColor: Colors.grey[900]?.withOpacity(0.2),
+                fillColor: const Color(0xFF343763).withOpacity(0.6),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
                   borderSide: BorderSide.none,
@@ -209,9 +222,9 @@ class _AddSubscriptionScreenState extends State<AddSubscriptionScreen> {
               style: const TextStyle(color: Colors.white),
               decoration: InputDecoration(
                 hintText: 'Description (optional)',
-                hintStyle: TextStyle(color: Colors.grey[500]),
+                hintStyle: TextStyle(color: Colors.white.withOpacity(0.5)),
                 filled: true,
-                fillColor: Colors.grey[900]?.withOpacity(0.2),
+                fillColor: const Color(0xFF343763).withOpacity(0.6),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
                   borderSide: BorderSide.none,
@@ -233,12 +246,18 @@ class _AddSubscriptionScreenState extends State<AddSubscriptionScreen> {
                     ...categoryNames.map(
                       (catName) => DropdownMenuItem(
                         value: catName,
-                        child: Text(catName, style: const TextStyle(color: Colors.white)),
+                        child: Text(
+                          catName,
+                          style: const TextStyle(color: Colors.white),
+                        ),
                       ),
                     ),
                     const DropdownMenuItem(
                       value: '__add_new__',
-                      child: Text('+ Add new category', style: TextStyle(color: Colors.white)),
+                      child: Text(
+                        '+ Add new category',
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ),
                   ],
                   onChanged: (val) async {
@@ -250,15 +269,16 @@ class _AddSubscriptionScreenState extends State<AddSubscriptionScreen> {
                   },
                   decoration: InputDecoration(
                     hintText: 'Select category',
-                    hintStyle: const TextStyle(color: Colors.grey),
+                    hintStyle:
+                        TextStyle(color: Colors.white.withOpacity(0.5)),
                     filled: true,
-                    fillColor: Colors.grey[900]?.withOpacity(0.2),
+                    fillColor: const Color(0xFF343763).withOpacity(0.6),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
                       borderSide: BorderSide.none,
                     ),
                   ),
-                  dropdownColor: const Color(0xFF101025),
+                  dropdownColor: const Color(0xFF2A2D4F),
                   style: const TextStyle(color: Colors.white),
                 );
               },
@@ -272,7 +292,7 @@ class _AddSubscriptionScreenState extends State<AddSubscriptionScreen> {
                 width: double.infinity,
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 decoration: BoxDecoration(
-                  color: Colors.grey[900]?.withOpacity(0.2),
+                  color: const Color(0xFF343763).withOpacity(0.6),
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Center(
@@ -290,7 +310,7 @@ class _AddSubscriptionScreenState extends State<AddSubscriptionScreen> {
               children: [
                 Text(
                   'Monthly price',
-                  style: TextStyle(color: Colors.grey[400]),
+                  style: TextStyle(color: Colors.white.withOpacity(0.6)),
                 ),
                 const SizedBox(height: 8),
                 Row(
@@ -308,7 +328,7 @@ class _AddSubscriptionScreenState extends State<AddSubscriptionScreen> {
                       style: const TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: Color(0xFF4DFFB3),
                       ),
                     ),
                     IconButton(
@@ -330,14 +350,18 @@ class _AddSubscriptionScreenState extends State<AddSubscriptionScreen> {
               child: ElevatedButton(
                 onPressed: _addSubscription,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF80FFB5),
+                  backgroundColor: const Color(0xFF4DFFB3),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(28),
                   ),
                 ),
                 child: const Text(
                   'Add this subscription',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.black),
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF2A2D4F),
+                  ),
                 ),
               ),
             ),

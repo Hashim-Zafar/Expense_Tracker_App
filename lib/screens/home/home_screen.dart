@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:expense_tracker/models/subscription.dart';
 import 'package:expense_tracker/services/firestore_service.dart';
-import 'package:expense_tracker/widgets/custom_bottom_nav_bar.dart';
-import '../subscription/add_subscription_screen.dart';
 import 'package:expense_tracker/widgets/budget_summary.dart';
 import 'package:expense_tracker/widgets/home_headet.dart';
 import 'package:expense_tracker/widgets/stats_row.dart';
+import '../subscription/add_subscription_screen.dart';
 import '../subscription/subscription_tabs.dart';
 import '../subscription/subscription_card.dart';
-import '../Category/category_main.dart';
 import '../subscription/edit_subscription_screen.dart';
-import '../settings/settings_screen.dart';
-import '../calender/calendar_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -23,10 +19,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final FirestoreService _firestoreService = FirestoreService();
 
-  int _selectedIndex = 0;
   int _selectedTab = 0;
-  int _currentIndex = 0;
-
   double _budget = 2000.0;
 
   @override
@@ -36,7 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _loadBudget() async {
-    double budget = await _firestoreService.getBudget();
+    final budget = await _firestoreService.getBudget();
     if (mounted) {
       setState(() => _budget = budget);
     }
@@ -75,7 +68,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF2B2D4F), // 60%
+      backgroundColor: const Color(0xFF2B2D4F),
 
       body: SafeArea(
         child: StreamBuilder<List<Subscription>>(
@@ -84,6 +77,7 @@ class _HomeScreenState extends State<HomeScreen> {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
             }
+
             if (snapshot.hasError) {
               return Center(
                 child: Text(
@@ -102,17 +96,22 @@ class _HomeScreenState extends State<HomeScreen> {
             final displayedSubs = _selectedTab == 0
                 ? subs
                 : _selectedTab == 1
-                ? _getUpcomingBills(subs)
-                : _getOverdueBills(subs);
+                    ? _getUpcomingBills(subs)
+                    : _getOverdueBills(subs);
 
             return Column(
               children: [
                 const SizedBox(height: 16),
-                HomeHeader(onSettingsTap: () {}),
+
+                /// HEADER (NO SETTINGS BUTTON)
+                const HomeHeader(),
+
                 const SizedBox(height: 20),
 
-                // 30% usage visually strong
-                BudgetSummary(totalAmount: monthlyTotal, maxAmount: _budget),
+                BudgetSummary(
+                  totalAmount: monthlyTotal,
+                  maxAmount: _budget,
+                ),
 
                 const SizedBox(height: 32),
 
@@ -155,7 +154,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (_) => EditSubscriptionScreen(
+                                      builder: (_) =>
+                                          EditSubscriptionScreen(
                                         subscription: sub,
                                       ),
                                     ),
@@ -172,13 +172,14 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
 
-      // 10% Accent stays limited
       floatingActionButton: FloatingActionButton(
         backgroundColor: const Color(0xFF5CFFB0),
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (_) => const AddSubscriptionScreen()),
+            MaterialPageRoute(
+              builder: (_) => const AddSubscriptionScreen(),
+            ),
           );
         },
         child: const Icon(Icons.add, color: Colors.black),
