@@ -40,6 +40,18 @@ class _AddSubscriptionScreenState extends State<AddSubscriptionScreen> {
       context: context,
       firstDate: DateTime.now(),
       lastDate: DateTime.now().add(const Duration(days: 365)),
+      builder: (context, child) => Theme(
+        data: ThemeData.dark().copyWith(
+          colorScheme: const ColorScheme.dark(
+            primary: Color(0xFF80FFB5),
+            onPrimary: Colors.black,
+            surface: Color(0xFF1C1B33),
+            onSurface: Colors.white,
+          ),
+          dialogBackgroundColor: const Color(0xFF101025),
+        ),
+        child: child!,
+      ),
     );
     if (picked != null) setState(() => _dueDate = picked);
   }
@@ -51,26 +63,35 @@ class _AddSubscriptionScreenState extends State<AddSubscriptionScreen> {
     await showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Add New Category'),
+        backgroundColor: const Color(0xFF101025),
+        title: const Text('Add New Category', style: TextStyle(color: Colors.white)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
               controller: _catCtrl,
-              decoration: const InputDecoration(hintText: 'Category name'),
+              style: const TextStyle(color: Colors.white),
+              decoration: const InputDecoration(
+                hintText: 'Category name',
+                hintStyle: TextStyle(color: Colors.grey),
+              ),
             ),
             const SizedBox(height: 12),
             TextField(
               controller: _budgetCtrl,
               keyboardType: TextInputType.number,
-              decoration: const InputDecoration(hintText: 'Budget'),
+              style: const TextStyle(color: Colors.white),
+              decoration: const InputDecoration(
+                hintText: 'Budget',
+                hintStyle: TextStyle(color: Colors.grey),
+              ),
             ),
           ],
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: const Text('Cancel', style: TextStyle(color: Color(0xFF9C8FFF))),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -83,7 +104,10 @@ class _AddSubscriptionScreenState extends State<AddSubscriptionScreen> {
               setState(() => _selectedCategory = name);
               Navigator.pop(context);
             },
-            child: const Text('Add'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF80FFB5),
+            ),
+            child: const Text('Add', style: TextStyle(color: Colors.black)),
           ),
         ],
       ),
@@ -95,7 +119,6 @@ class _AddSubscriptionScreenState extends State<AddSubscriptionScreen> {
 
     final selectedCategory = _selectedCategory ?? 'Uncategorized';
 
-    // 1️⃣ Add the subscription
     await _firestoreService.addSubscription(
       Subscription(
         id: '',
@@ -110,11 +133,8 @@ class _AddSubscriptionScreenState extends State<AddSubscriptionScreen> {
       ),
     );
 
-    // 2️⃣ Update the category's spent amount
     if (selectedCategory != 'Uncategorized') {
-      final category = await _categoryService.getCategoryByName(
-        selectedCategory,
-      );
+      final category = await _categoryService.getCategoryByName(selectedCategory);
       if (category != null) {
         final newSpent = category.spent + _price;
         await _categoryService.updateCategorySpent(category.id, newSpent);
@@ -127,15 +147,15 @@ class _AddSubscriptionScreenState extends State<AddSubscriptionScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0F0F0F),
+      backgroundColor: const Color(0xFF101025),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text('New'),
+        title: const Text('New', style: TextStyle(color: Colors.white)),
       ),
       body: Padding(
         padding: const EdgeInsets.all(20),
@@ -148,12 +168,12 @@ class _AddSubscriptionScreenState extends State<AddSubscriptionScreen> {
               style: TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
-                color: Colors.white,
+                color: Color(0xFFE0E0FF),
               ),
             ),
             const SizedBox(height: 32),
 
-            // Dynamic icon preview
+            // Icon preview
             Container(
               width: 130,
               height: 130,
@@ -165,7 +185,7 @@ class _AddSubscriptionScreenState extends State<AddSubscriptionScreen> {
             ),
             const SizedBox(height: 24),
 
-            // Subscription name
+            // Name
             TextField(
               controller: _nameCtrl,
               onChanged: _updateVisuals,
@@ -174,7 +194,7 @@ class _AddSubscriptionScreenState extends State<AddSubscriptionScreen> {
                 hintText: 'Subscription name',
                 hintStyle: TextStyle(color: Colors.grey[500]),
                 filled: true,
-                fillColor: Colors.grey[900]?.withOpacity(0.4),
+                fillColor: Colors.grey[900]?.withOpacity(0.2),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
                   borderSide: BorderSide.none,
@@ -191,7 +211,7 @@ class _AddSubscriptionScreenState extends State<AddSubscriptionScreen> {
                 hintText: 'Description (optional)',
                 hintStyle: TextStyle(color: Colors.grey[500]),
                 filled: true,
-                fillColor: Colors.grey[900]?.withOpacity(0.4),
+                fillColor: Colors.grey[900]?.withOpacity(0.2),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
                   borderSide: BorderSide.none,
@@ -213,12 +233,12 @@ class _AddSubscriptionScreenState extends State<AddSubscriptionScreen> {
                     ...categoryNames.map(
                       (catName) => DropdownMenuItem(
                         value: catName,
-                        child: Text(catName),
+                        child: Text(catName, style: const TextStyle(color: Colors.white)),
                       ),
                     ),
                     const DropdownMenuItem(
                       value: '__add_new__',
-                      child: Text('+ Add new category'),
+                      child: Text('+ Add new category', style: TextStyle(color: Colors.white)),
                     ),
                   ],
                   onChanged: (val) async {
@@ -230,29 +250,29 @@ class _AddSubscriptionScreenState extends State<AddSubscriptionScreen> {
                   },
                   decoration: InputDecoration(
                     hintText: 'Select category',
+                    hintStyle: const TextStyle(color: Colors.grey),
                     filled: true,
-                    fillColor: Colors.grey[900]?.withOpacity(0.4),
+                    fillColor: Colors.grey[900]?.withOpacity(0.2),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
                       borderSide: BorderSide.none,
                     ),
                   ),
-                  dropdownColor: Colors.grey[900],
+                  dropdownColor: const Color(0xFF101025),
                   style: const TextStyle(color: Colors.white),
                 );
               },
             ),
-
             const SizedBox(height: 32),
 
-            // Due date picker
+            // Due date
             GestureDetector(
               onTap: _pickDueDate,
               child: Container(
                 width: double.infinity,
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 decoration: BoxDecoration(
-                  color: Colors.grey[900]?.withOpacity(0.4),
+                  color: Colors.grey[900]?.withOpacity(0.2),
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Center(
@@ -263,7 +283,6 @@ class _AddSubscriptionScreenState extends State<AddSubscriptionScreen> {
                 ),
               ),
             ),
-
             const SizedBox(height: 32),
 
             // Monthly price
@@ -311,18 +330,17 @@ class _AddSubscriptionScreenState extends State<AddSubscriptionScreen> {
               child: ElevatedButton(
                 onPressed: _addSubscription,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFFF6B6B),
+                  backgroundColor: const Color(0xFF80FFB5),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(28),
                   ),
                 ),
                 child: const Text(
                   'Add this subscription',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.black),
                 ),
               ),
             ),
-
             const SizedBox(height: 16),
           ],
         ),

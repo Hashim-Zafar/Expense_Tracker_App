@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import './register_screen.dart'; // adjust path
+import './register_screen.dart';
 import './login_screen.dart';
-// adjust path if you have it
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
@@ -15,28 +14,27 @@ class WelcomeScreen extends StatelessWidget {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Color(0xFF181818),
-              Color(0xFF0F0F0F),
+              Color(0xFF1C1B33), // dark night blue
+              Color(0xFF101025), // near black
             ],
           ),
         ),
         child: SafeArea(
           child: Stack(
             children: [
-              // Floating icons (subscription logos) - position them as bubbles/abstract
+              // Floating subscription logos
               Positioned(
                 top: 120,
                 left: 40,
                 child: Opacity(
                   opacity: 0.7,
                   child: Image.asset(
-                    'assets/images/netflix.png', // ← your asset
+                    'assets/images/netflix.png',
                     width: 80,
                     height: 80,
                   ),
                 ),
               ),
-
               Positioned(
                 top: 180,
                 right: 60,
@@ -49,7 +47,6 @@ class WelcomeScreen extends StatelessWidget {
                   ),
                 ),
               ),
-
               Positioned(
                 bottom: 220,
                 left: 80,
@@ -62,8 +59,6 @@ class WelcomeScreen extends StatelessWidget {
                   ),
                 ),
               ),
-
-              // Optional: more floating elements (add as you have assets)
 
               // Main content
               Padding(
@@ -78,7 +73,7 @@ class WelcomeScreen extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 60,
                         fontWeight: FontWeight.w900,
-                        color: Colors.white,
+                        color: Color(0xFFE0E0FF), // soft white
                         letterSpacing: 2,
                         shadows: [
                           Shadow(
@@ -98,7 +93,7 @@ class WelcomeScreen extends StatelessWidget {
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 20,
-                        color: Colors.grey[300],
+                        color: const Color(0xFFB0B0D0), // muted lavender
                         height: 1.4,
                       ),
                     ),
@@ -119,10 +114,10 @@ class WelcomeScreen extends StatelessWidget {
                           );
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFFF6B6B),
-                          foregroundColor: Colors.white,
+                          backgroundColor: const Color(0xFF80FFB5), // minty
+                          foregroundColor: Colors.black,
                           elevation: 8,
-                          shadowColor: const Color(0xFFFF6B6B).withOpacity(0.4),
+                          shadowColor: const Color(0xFF80FFB5).withOpacity(0.4),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(32),
                           ),
@@ -146,7 +141,7 @@ class WelcomeScreen extends StatelessWidget {
                         Text(
                           'Already have an account? ',
                           style: TextStyle(
-                            color: Colors.grey[400],
+                            color: const Color(0xFFB0B0D0), // muted lavender
                             fontSize: 16,
                           ),
                         ),
@@ -162,7 +157,7 @@ class WelcomeScreen extends StatelessWidget {
                           child: const Text(
                             'Log In',
                             style: TextStyle(
-                              color: Color(0xFFFF6B6B),
+                              color: Color(0xFF9C8FFF), // pastel violet
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
                             ),

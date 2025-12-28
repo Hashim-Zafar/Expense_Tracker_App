@@ -14,11 +14,9 @@ class _AuthScreenState extends State<AuthScreen> {
 
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _nameController = TextEditingController(); // only visible in signup
+  final _nameController = TextEditingController();
 
   bool _isLoading = false;
-
-  //Added by Hashim
 
   Future<void> _signIn() async {
     if (_isLoading) return;
@@ -31,7 +29,6 @@ class _AuthScreenState extends State<AuthScreen> {
       );
 
       if (mounted) {
-        // Check if widget is still in tree
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const HomeScreen()),
@@ -40,12 +37,12 @@ class _AuthScreenState extends State<AuthScreen> {
     } on FirebaseAuthException catch (e) {
       String message =
           (e.code == 'user-not-found' || e.code == 'wrong-password')
-          ? 'Invalid email or password'
-          : 'Error: ${e.message}';
+              ? 'Invalid email or password'
+              : 'Error: ${e.message}';
+
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(message)));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(message)));
       }
     } finally {
       setState(() => _isLoading = false);
@@ -61,7 +58,10 @@ class _AuthScreenState extends State<AuthScreen> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Color(0xFF1A1A1A), Color(0xFF121212)],
+            colors: [
+              Color(0xFF2E2C4F), // dark purple
+              Color(0xFF1E1D36), // deeper purple
+            ],
           ),
         ),
         child: SafeArea(
@@ -72,7 +72,7 @@ class _AuthScreenState extends State<AuthScreen> {
               children: [
                 const Spacer(flex: 2),
 
-                // Logo / App Name
+                // App Name
                 const Text(
                   'Trackizer',
                   textAlign: TextAlign.center,
@@ -88,12 +88,15 @@ class _AuthScreenState extends State<AuthScreen> {
                 Text(
                   _isLogin ? 'Welcome back' : 'Create your account',
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 18, color: Colors.grey[400]),
+                  style: const TextStyle(
+                    fontSize: 18,
+                    color: Color(0xFFB7B6D8),
+                  ),
                 ),
 
                 const Spacer(flex: 3),
 
-                // Name field - only shown during signup
+                // Full Name (Signup only)
                 AnimatedOpacity(
                   opacity: _isLogin ? 0.0 : 1.0,
                   duration: const Duration(milliseconds: 400),
@@ -106,19 +109,23 @@ class _AuthScreenState extends State<AuthScreen> {
                             children: [
                               TextField(
                                 controller: _nameController,
-                                style: const TextStyle(color: Colors.white),
+                                style:
+                                    const TextStyle(color: Colors.white),
                                 decoration: InputDecoration(
                                   labelText: 'Full Name',
-                                  labelStyle: TextStyle(
-                                    color: Colors.grey[500],
+                                  labelStyle: const TextStyle(
+                                    color: Color(0xFFB7B6D8),
                                   ),
                                   filled: true,
-                                  fillColor: Colors.grey[900],
+                                  fillColor:
+                                      Color(0xFF3A3860), // card purple
                                   border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(16),
+                                    borderRadius:
+                                        BorderRadius.circular(16),
                                     borderSide: BorderSide.none,
                                   ),
-                                  contentPadding: const EdgeInsets.symmetric(
+                                  contentPadding:
+                                      const EdgeInsets.symmetric(
                                     horizontal: 20,
                                     vertical: 16,
                                   ),
@@ -130,16 +137,18 @@ class _AuthScreenState extends State<AuthScreen> {
                   ),
                 ),
 
-                // Email field
+                // Email
                 TextField(
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
                   style: const TextStyle(color: Colors.white),
                   decoration: InputDecoration(
                     labelText: 'Email',
-                    labelStyle: TextStyle(color: Colors.grey[500]),
+                    labelStyle: const TextStyle(
+                      color: Color(0xFFB7B6D8),
+                    ),
                     filled: true,
-                    fillColor: Colors.grey[900],
+                    fillColor: const Color(0xFF3A3860),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
                       borderSide: BorderSide.none,
@@ -153,16 +162,18 @@ class _AuthScreenState extends State<AuthScreen> {
 
                 const SizedBox(height: 16),
 
-                // Password field
+                // Password
                 TextField(
                   controller: _passwordController,
                   obscureText: true,
                   style: const TextStyle(color: Colors.white),
                   decoration: InputDecoration(
                     labelText: 'Password',
-                    labelStyle: TextStyle(color: Colors.grey[500]),
+                    labelStyle: const TextStyle(
+                      color: Color(0xFFB7B6D8),
+                    ),
                     filled: true,
-                    fillColor: Colors.grey[900],
+                    fillColor: const Color(0xFF3A3860),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
                       borderSide: BorderSide.none,
@@ -171,45 +182,41 @@ class _AuthScreenState extends State<AuthScreen> {
                       horizontal: 20,
                       vertical: 16,
                     ),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        Icons.visibility_outlined,
-                        color: Colors.grey[400],
-                      ),
-                      onPressed: () {
-                        // You can add show/hide password logic later
-                      },
+                    suffixIcon: const Icon(
+                      Icons.lock_outline,
+                      color: Color(0xFFB38CFF),
                     ),
                   ),
                 ),
 
                 const SizedBox(height: 32),
 
-                // Main Action Button
+                // Button
                 SizedBox(
                   height: 60,
                   child: ElevatedButton(
                     onPressed: _isLoading ? null : _signIn,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFFF6B6B),
-                      foregroundColor: Colors.white,
+                      backgroundColor: const Color(0xFF5CFFB0), // mint
+                      foregroundColor: Colors.black,
                       elevation: 0,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30),
                       ),
                     ),
                     child: _isLoading
-                        ? const CircularProgressIndicator(color: Colors.white)
+                        ? const CircularProgressIndicator(
+                            color: Colors.black)
                         : Text(
                             _isLogin ? 'Log in' : 'Sign Up',
-                            style: TextStyle(fontSize: 18),
+                            style: const TextStyle(fontSize: 18),
                           ),
                   ),
                 ),
 
                 const SizedBox(height: 24),
 
-                // Toggle between login/signup
+                // Toggle
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -217,7 +224,9 @@ class _AuthScreenState extends State<AuthScreen> {
                       _isLogin
                           ? "Don't have an account? "
                           : 'Already have an account? ',
-                      style: TextStyle(color: Colors.grey[400]),
+                      style: const TextStyle(
+                        color: Color(0xFFB7B6D8),
+                      ),
                     ),
                     TextButton(
                       onPressed: () {
@@ -225,10 +234,10 @@ class _AuthScreenState extends State<AuthScreen> {
                           _isLogin = !_isLogin;
                         });
                       },
-                      child: Text(
-                        _isLogin ? 'Sign Up' : 'Log In',
-                        style: const TextStyle(
-                          color: Color(0xFFFF6B6B),
+                      child: const Text(
+                        'Sign Up',
+                        style: TextStyle(
+                          color: Color(0xFFB38CFF),
                           fontWeight: FontWeight.bold,
                         ),
                       ),

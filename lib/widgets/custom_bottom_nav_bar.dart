@@ -25,7 +25,7 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
         clipBehavior: Clip.none,
         alignment: Alignment.center,
         children: [
-          // Background with vertical stripes + glass effect
+          // Background glass container
           ClipRRect(
             borderRadius: BorderRadius.circular(30),
             child: BackdropFilter(
@@ -33,9 +33,9 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(30),
-                  color: Colors.black.withOpacity(0.35),
+                  color: const Color(0xFF2B2D4F).withOpacity(0.55), // 60%
                   border: Border.all(
-                    color: Colors.white.withOpacity(0.08),
+                    color: const Color(0xFFB18AFF).withOpacity(0.18), // 30%
                     width: 1.5,
                   ),
                 ),
@@ -44,7 +44,7 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
                   children: [
                     _buildNavItem(0, Icons.home_outlined, 'Home'),
                     _buildNavItem(1, Icons.grid_view_outlined, 'Overview'),
-                    const SizedBox(width: 70), // space for center button
+                    const SizedBox(width: 70),
                     _buildNavItem(2, Icons.calendar_today_outlined, 'Calendar'),
                     _buildNavItem(3, Icons.credit_card_outlined, 'Cards'),
                   ],
@@ -53,27 +53,20 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
             ),
           ),
 
-          // Central floating + button with glow
+          // Center floating action button
           Positioned(
             bottom: 40,
             child: GestureDetector(
-              onTap: () => widget.onTap(-1), // -1 or custom action for add
+              onTap: () => widget.onTap(-1),
               child: Container(
                 width: 72,
                 height: 72,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  gradient: const LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      Color(0xFFFF6B6B),
-                      Color(0xFFFF8A65),
-                    ],
-                  ),
+                  color: const Color(0xFF5CFFB0), // 10% accent
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFFFF6B6B).withOpacity(0.45),
+                      color: const Color(0xFF5CFFB0).withOpacity(0.45),
                       blurRadius: 20,
                       spreadRadius: 4,
                       offset: const Offset(0, 8),
@@ -87,7 +80,7 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
                 ),
                 child: const Icon(
                   Icons.add_rounded,
-                  color: Colors.white,
+                  color: Color(0xFF1E1D36),
                   size: 36,
                 ),
               ),
@@ -115,7 +108,9 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
               curve: Curves.easeOutCubic,
               child: Icon(
                 icon,
-                color: isActive ? const Color(0xFFFF6B6B) : Colors.grey[400],
+                color: isActive
+                    ? const Color(0xFF5CFFB0) // 10% active
+                    : const Color(0xFFB7B6D8), // muted inactive
                 size: 28,
               ),
             ),
@@ -127,7 +122,7 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
                 width: 6,
                 height: 6,
                 decoration: const BoxDecoration(
-                  color: Color(0xFFFF6B6B),
+                  color: Color(0xFF5CFFB0), // 10% indicator
                   shape: BoxShape.circle,
                 ),
               ),

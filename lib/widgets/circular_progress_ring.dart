@@ -58,7 +58,7 @@ class _CircularProgressRingState extends State<CircularProgressRing>
           return CustomPaint(
             painter: _RingPainter(
               progress: progress * _animation.value,
-              color: const Color(0xFFFF6B6B),
+              color: const Color.fromARGB(255, 51, 216, 145),
             ),
             child: Center(
               child: Column(

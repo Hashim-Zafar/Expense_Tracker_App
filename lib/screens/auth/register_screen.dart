@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart'; //Hashim
+import 'package:firebase_auth/firebase_auth.dart';
 import '../home/home_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -14,9 +14,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
-  bool _isLoading = false; // Added by Hashim
+  bool _isLoading = false;
 
-  // Added by Hashim Register Logic
   Future<void> _signUp() async {
     if (_isLoading) return;
     setState(() => _isLoading = true);
@@ -42,9 +41,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
     } on FirebaseAuthException catch (e) {
       String message = e.message ?? 'Signup failed';
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(message)));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(message)));
       }
     } finally {
       setState(() => _isLoading = false);
@@ -60,7 +58,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Color(0xFF181818), Color(0xFF0F0F0F)],
+            colors: [
+              Color(0xFF1C1B33), // dark night blue
+              Color(0xFF101025), // near black
+            ],
           ),
         ),
         child: SafeArea(
@@ -85,26 +86,25 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         style: TextStyle(
                           fontSize: 32,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: Color(0xFFE0E0FF),
                         ),
                       ),
                     ),
-                    const SizedBox(width: 48), // balance back button
+                    const SizedBox(width: 48),
                   ],
                 ),
 
                 const SizedBox(height: 40),
 
-                // Subtitle
                 Text(
                   'Join Trackizer and take control of your subscriptions',
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 16, color: Colors.grey[400]),
+                  style: TextStyle(fontSize: 16, color: Color(0xFFB0B0D0)),
                 ),
 
                 const Spacer(flex: 3),
 
-                // Form Fields
+                // Name Field
                 _buildTextField(
                   controller: _nameController,
                   label: 'Full Name',
@@ -113,6 +113,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                 const SizedBox(height: 16),
 
+                // Email Field
                 _buildTextField(
                   controller: _emailController,
                   label: 'Email',
@@ -122,6 +123,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                 const SizedBox(height: 16),
 
+                // Password Field
                 _buildTextField(
                   controller: _passwordController,
                   label: 'Password',
@@ -132,7 +134,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       _obscurePassword
                           ? Icons.visibility_off_outlined
                           : Icons.visibility_outlined,
-                      color: Colors.grey[400],
+                      color: Color(0xFF9C8FFF),
                     ),
                     onPressed: () =>
                         setState(() => _obscurePassword = !_obscurePassword),
@@ -145,40 +147,36 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 SizedBox(
                   height: 60,
                   child: ElevatedButton(
-                    //Press functionality added by hashim
                     onPressed: _isLoading ? null : _signUp,
-
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFFF6B6B),
-                      foregroundColor: Colors.white,
+                      backgroundColor: const Color(0xFF80FFB5),
+                      foregroundColor: Colors.black,
                       elevation: 0,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30),
                       ),
                     ),
-                    //Added by Hashim
                     child: _isLoading
-                        ? const CircularProgressIndicator(color: Colors.white)
+                        ? const CircularProgressIndicator(color: Colors.black)
                         : const Text('Sign Up', style: TextStyle(fontSize: 18)),
                   ),
                 ),
 
                 const Spacer(flex: 4),
 
-                // Already have account link
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
                       'Already have an account? ',
-                      style: TextStyle(color: Colors.grey[400]),
+                      style: TextStyle(color: Color(0xFFB0B0D0)),
                     ),
                     TextButton(
                       onPressed: () => Navigator.pop(context),
                       child: const Text(
                         'Log In',
                         style: TextStyle(
-                          color: Color(0xFFFF6B6B),
+                          color: Color(0xFF9C8FFF),
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -210,13 +208,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
       style: const TextStyle(color: Colors.white),
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: TextStyle(color: Colors.grey[500]),
+        labelStyle: const TextStyle(color: Color(0xFFB0B0D0)),
         prefixIcon: icon != null
-            ? Icon(icon, color: Colors.grey[500], size: 22)
+            ? Icon(icon, color: Color(0xFFB0B0D0), size: 22)
             : null,
         suffixIcon: suffixIcon,
         filled: true,
-        fillColor: Colors.grey[900]?.withOpacity(0.6),
+        fillColor: Color(0xFF2B2A4A),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide.none,

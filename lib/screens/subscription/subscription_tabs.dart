@@ -32,8 +32,8 @@ class SubscriptionTabs extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 12),
           decoration: BoxDecoration(
             color: isSelected
-                ? const Color(0xFFFF6B6B).withOpacity(0.15)
-                : Colors.grey[900],
+                ? const Color(0xFFB18AFF).withOpacity(0.25) // 30%
+                : const Color(0xFF2B2D4F), // 60%
             borderRadius: BorderRadius.horizontal(
               left: index == 0 ? const Radius.circular(16) : Radius.zero,
               right: index == 2 ? const Radius.circular(16) : Radius.zero,
@@ -42,8 +42,11 @@ class SubscriptionTabs extends StatelessWidget {
           child: Center(
             child: Text(
               title,
+              textAlign: TextAlign.center,
               style: TextStyle(
-                color: isSelected ? const Color(0xFFFF6B6B) : Colors.grey,
+                color: isSelected
+                    ? const Color(0xFFB18AFF) // 30%
+                    : const Color(0xFFB7B6D8), // muted text
                 fontWeight: FontWeight.w600,
               ),
             ),

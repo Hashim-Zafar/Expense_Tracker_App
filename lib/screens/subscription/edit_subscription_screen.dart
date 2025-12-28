@@ -59,11 +59,12 @@ class _EditSubscriptionScreenState extends State<EditSubscriptionScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0F0F0F),
+      backgroundColor: const Color(0xFF101025),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: const Text('Edit'),
+        title: const Text('Edit', style: TextStyle(color: Colors.white)),
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: Padding(
         padding: const EdgeInsets.all(20),
@@ -77,7 +78,7 @@ class _EditSubscriptionScreenState extends State<EditSubscriptionScreen> {
               style: TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
-                color: Colors.white,
+                color: Color(0xFFE0E0FF),
               ),
             ),
 
@@ -103,8 +104,9 @@ class _EditSubscriptionScreenState extends State<EditSubscriptionScreen> {
               style: const TextStyle(color: Colors.white),
               decoration: InputDecoration(
                 hintText: 'Subscription name',
+                hintStyle: TextStyle(color: Colors.grey[500]),
                 filled: true,
-                fillColor: Colors.grey[900]?.withOpacity(0.4),
+                fillColor: Colors.grey[900]?.withOpacity(0.2),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
                   borderSide: BorderSide.none,
@@ -156,33 +158,40 @@ class _EditSubscriptionScreenState extends State<EditSubscriptionScreen> {
 
             const Spacer(),
 
-            // Save
+            // Save button
             SizedBox(
               width: double.infinity,
               height: 56,
               child: ElevatedButton(
                 onPressed: _saveChanges,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFFF6B6B),
+                  backgroundColor: const Color(0xFF80FFB5),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(28),
                   ),
                 ),
                 child: const Text(
                   'Save changes',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black,
+                  ),
                 ),
               ),
             ),
 
             const SizedBox(height: 12),
 
-            // Delete
+            // Delete button
             TextButton(
               onPressed: _deleteSubscription,
               child: const Text(
                 'Delete subscription',
-                style: TextStyle(color: Colors.redAccent),
+                style: TextStyle(
+                  color: Color(0xFFFF6B6B),
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
 

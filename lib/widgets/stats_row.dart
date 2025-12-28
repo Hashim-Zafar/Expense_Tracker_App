@@ -17,16 +17,16 @@ class StatsRow extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        _buildStatCard('Active subs', activeCount.toString(), Colors.green),
+        _buildStatCard('Active subs', activeCount.toString(), const Color(0xFF5CFFB0)), // 10% accent
         _buildStatCard(
           'Highest subs',
           '\$${highest.toStringAsFixed(2)}',
-          Colors.orange,
+          const Color(0xFFB18AFF), // 30% secondary
         ),
         _buildStatCard(
           'Lowest subs',
           '\$${lowest.toStringAsFixed(2)}',
-          Colors.blue,
+          const Color(0xFF2B2D4F), // 60% surface
         ),
       ],
     );
@@ -38,7 +38,7 @@ class StatsRow extends StatelessWidget {
         margin: const EdgeInsets.symmetric(horizontal: 6),
         padding: const EdgeInsets.symmetric(vertical: 16),
         decoration: BoxDecoration(
-          color: Colors.grey[900]?.withOpacity(0.4),
+          color: const Color(0xFF2B2D4F).withOpacity(0.4), // 60% base
           borderRadius: BorderRadius.circular(16),
         ),
         child: Column(

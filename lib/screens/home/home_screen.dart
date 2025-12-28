@@ -23,9 +23,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   int _selectedIndex = 0;
   int _selectedTab = 0;
-  int _currentIndex = 0; // <-- define this state variable
+  int _currentIndex = 0;
 
-  double _budget = 2000.0; // Default budget
+  double _budget = 2000.0;
 
   @override
   void initState() {
@@ -43,7 +43,6 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Subscription> _getUpcomingBills(List<Subscription> subs) {
     final now = DateTime.now();
     final end = now.add(const Duration(days: 30));
-
     return subs.where((sub) {
       final due = sub.nextDue.toDate();
       return !sub.isPaid && due.isAfter(now) && due.isBefore(end);
@@ -74,160 +73,126 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBodyBehindAppBar: true,
-      backgroundColor: const Color(0xFF0F0F0F),
-      body: Stack(
-        children: [
-          // Background
-          Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Color(0xFF121212),
-                  Color(0xFF0A0A0A),
-                  Color(0xFF0C0C0C),
-                  Color(0xFF0A0A0A),
-                ],
-                stops: [0.0, 0.4, 0.6, 1.0],
-              ),
-            ),
-            child: Opacity(
-              opacity: 0.15,
-              child: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: List.generate(
-                      20,
-                      (_) => Colors.white.withOpacity(0.02),
-                    ),
-                    stops: List.generate(20, (i) => i / 20),
-                  ),
+      backgroundColor: const Color(0xFF2B2D4F), // 60%
+
+      body: SafeArea(
+        child: StreamBuilder<List<Subscription>>(
+          stream: _firestoreService.getSubscriptions(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (snapshot.hasError) {
+              return Center(
+                child: Text(
+                  'Error: ${snapshot.error}',
+                  style: const TextStyle(color: Colors.white),
                 ),
-              ),
-            ),
-          ),
+              );
+            }
 
-          SafeArea(
-            child: StreamBuilder<List<Subscription>>(
-              stream: _firestoreService.getSubscriptions(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                if (snapshot.hasError) {
-                  return Center(
-                    child: Text(
-                      'Error: ${snapshot.error}',
-                      style: const TextStyle(color: Colors.white),
-                    ),
-                  );
-                }
+            final subs = snapshot.data ?? [];
+            final monthlyTotal = _calculateMonthlyTotal(subs);
+            final activeCount = subs.length;
+            final highest = _getHighestPrice(subs);
+            final lowest = _getLowestPrice(subs);
 
-                final List<Subscription> subs = snapshot.data ?? [];
-                final double monthlyTotal = _calculateMonthlyTotal(subs);
-                final int activeCount = subs.length;
-                final double highest = _getHighestPrice(subs);
-                final double lowest = _getLowestPrice(subs);
-
-                final List<Subscription> displayedSubs = _selectedTab == 0
-                    ? subs
-                    : _selectedTab == 1
+            final displayedSubs = _selectedTab == 0
+                ? subs
+                : _selectedTab == 1
                     ? _getUpcomingBills(subs)
                     : _getOverdueBills(subs);
 
-                return Column(
-                  children: [
-                    const SizedBox(height: 16),
-                    HomeHeader(onSettingsTap: () {}),
-                    const SizedBox(height: 20),
-                    BudgetSummary(
-                      totalAmount: monthlyTotal,
-                      maxAmount: _budget,
-                    ),
+            return Column(
+              children: [
+                const SizedBox(height: 16),
+                HomeHeader(onSettingsTap: () {}),
+                const SizedBox(height: 20),
 
-                    const SizedBox(height: 32),
-                    StatsRow(
-                      activeCount: activeCount,
-                      highest: highest,
-                      lowest: lowest,
-                    ),
-                    const SizedBox(height: 32),
-                    SubscriptionTabs(
-                      selectedTab: _selectedTab,
-                      onTabSelected: (index) =>
-                          setState(() => _selectedTab = index),
-                    ),
-                    const SizedBox(height: 16),
+                // 30% usage visually strong
+                BudgetSummary(
+                  totalAmount: monthlyTotal,
+                  maxAmount: _budget,
+                ),
 
-                    // Use Expanded + ListView.builder to prevent memory crash
-                    Expanded(
-                      child: displayedSubs.isEmpty
-                          ? const Center(
-                              child: Text(
-                                'No subscriptions yet',
-                                style: TextStyle(color: Colors.grey),
+                const SizedBox(height: 32),
+
+                StatsRow(
+                  activeCount: activeCount,
+                  highest: highest,
+                  lowest: lowest,
+                ),
+
+                const SizedBox(height: 32),
+
+                SubscriptionTabs(
+                  selectedTab: _selectedTab,
+                  onTabSelected: (index) =>
+                      setState(() => _selectedTab = index),
+                ),
+
+                const SizedBox(height: 16),
+
+                Expanded(
+                  child: displayedSubs.isEmpty
+                      ? const Center(
+                          child: Text(
+                            'No subscriptions yet',
+                            style: TextStyle(color: Colors.white70),
+                          ),
+                        )
+                      : ListView.builder(
+                          physics: const BouncingScrollPhysics(),
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          itemCount: displayedSubs.length,
+                          itemBuilder: (context, index) {
+                            final sub = displayedSubs[index];
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 12),
+                              child: SubscriptionCard(
+                                sub: sub,
+                                firestoreService: _firestoreService,
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) =>
+                                          EditSubscriptionScreen(
+                                        subscription: sub,
+                                      ),
+                                    ),
+                                  );
+                                },
                               ),
-                            )
-                          : ListView.builder(
-                              physics: const BouncingScrollPhysics(),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 20,
-                              ),
-                              itemCount: displayedSubs.length,
-                              itemBuilder: (context, index) {
-                                final sub = displayedSubs[index];
-                                return Padding(
-                                  padding: const EdgeInsets.only(bottom: 12),
-                                  child: SubscriptionCard(
-                                    sub: sub,
-                                    firestoreService: _firestoreService,
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (_) =>
-                                              EditSubscriptionScreen(
-                                                subscription: sub,
-                                              ),
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                );
-                              },
-                            ),
-                    ),
-                  ],
-                );
-              },
-            ),
-          ),
-        ],
+                            );
+                          },
+                        ),
+                ),
+              ],
+            );
+          },
+        ),
       ),
 
+      // 10% Accent stays limited
       floatingActionButton: FloatingActionButton(
-        backgroundColor: const Color(0xFFFF6B6B),
+        backgroundColor: const Color(0xFF5CFFB0),
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (_) => const AddSubscriptionScreen()),
+            MaterialPageRoute(
+              builder: (_) => const AddSubscriptionScreen(),
+            ),
           );
         },
-        child: const Icon(Icons.add),
+        child: const Icon(Icons.add, color: Colors.black),
       ),
+
       bottomNavigationBar: CustomBottomNavBar(
         currentIndex: _currentIndex,
         onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-
+          setState(() => _currentIndex = index);
           if (index == 1) {
-            // second button = category page
             Navigator.push(
               context,
               MaterialPageRoute(builder: (_) => CategoryPage()),
